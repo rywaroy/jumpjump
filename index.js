@@ -15,8 +15,8 @@ const Jump = {
                 h: 30 + Math.random() * 15,
                 x: screenWidth + 800 * Math.random()
             }, // 柱子
-            
             sy: 0,
+            step: 0, // 步子
         },
     ], // 关卡
     score: 0, // 得分
@@ -66,9 +66,16 @@ const Jump = {
             customs.jumpHeight = 0;
         }
         this.drawLine(customs.ey);
-        this.drawMan(customs.jumpHeight, customs.ey);
+        this.drawMan(customs.jumpHeight, customs.ey, customs.step);
         this.drawColumn(customs.columns, customs.ey);
         this.collision(customs.jumpHeight, customs.columns);
+        if (customs.jumpHeight < 10) {
+            customs.step++;
+        }
+        
+        if (customs.step === 20) {
+            customs.step = 0
+        }
     },
     drawLine(ey) {
         this.ctx.beginPath();
@@ -76,7 +83,7 @@ const Jump = {
         this.ctx.lineTo(screenWidth, ey);
         this.ctx.stroke();
     },
-    drawMan(h, ey) {
+    drawMan(h, ey, step) {
         const height = ey - h;
         this.ctx.beginPath();
         this.ctx.arc(30, height - 40, 10, 2 * Math.PI, false);
@@ -87,19 +94,19 @@ const Jump = {
         this.ctx.stroke();
         this.ctx.beginPath();
         this.ctx.moveTo(30, height - 30);
-        this.ctx.lineTo(20, height - 15);
+        this.ctx.lineTo(20, h > 10 ? height - 20 : height - 15);
         this.ctx.stroke();
         this.ctx.beginPath();
         this.ctx.moveTo(30, height - 30);
-        this.ctx.lineTo(40, height - 15);
+        this.ctx.lineTo(40, h > 10 ? height - 20 : height - 15);
         this.ctx.stroke();
         this.ctx.beginPath();
         this.ctx.moveTo(30, height - 15);
-        this.ctx.lineTo(20, height);
+        this.ctx.lineTo(20 + step, height);
         this.ctx.stroke();
         this.ctx.beginPath();
         this.ctx.moveTo(30, height - 15);
-        this.ctx.lineTo(40, height);
+        this.ctx.lineTo(40 - step, height);
         this.ctx.stroke();
     },
     drawColumn(columns, ey) {
@@ -147,6 +154,7 @@ const Jump = {
                         x: screenWidth + 800 * Math.random()
                     }, // 柱子
                     sy: i * screenHeight / this.custom,
+                    step: 0, // 步子
                 });
             }
             setTimeout(() => {
@@ -166,7 +174,7 @@ const Jump = {
                 this.customs[index].speed = 6.4;
             }
         });
-      },
+    },
 }
 
 Jump.init();
